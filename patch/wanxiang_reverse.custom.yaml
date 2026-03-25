@@ -1,4 +1,9 @@
 patch:
   speller/algebra:
     __include: wanxiang_algebra:/reverse/小鹤双拼
-    __patch: wanxiang_algebra:/reverse/hspzn      #笔画类型有hspzn，hupvd及hslzy（适配乱序17）可选
+    __patch: wanxiang_algebra:/reverse/hspzn
+
+  speller/algebra/@before 0: derive/(ē|é|ě|è|e)ng(.*)$/$1n$2
+  speller/algebra/@before 1: derive/(ē|é|ě|è|e)n(.*)$/$1ng$2
+  speller/algebra/@before 2: derive/(ī|í|ǐ|ì|i)ng(.*)$/$1n$2
+  speller/algebra/@before 3: derive/(ī|í|ǐ|ì|i)n(.*)$/$1ng$2
