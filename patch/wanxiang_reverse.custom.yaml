@@ -1,0 +1,4 @@
+patch:
+  speller/algebra:
+    __include: wanxiang_algebra:/reverse/小鹤双拼
+    __patch: wanxiang_algebra:/reverse/hspzn      #笔画类型有hspzn，hupvd及hslzy（适配乱序17）可选

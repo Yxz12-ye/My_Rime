@@ -6,7 +6,7 @@ author: Yexkr
 style:
   auto_caps: false # 自動句首大寫:true|false|ascii
   proximity_correction: true # 按键纠错
-  reset_ascii_mode: true # 显示键盘是否重置为中文模式
+  reset_ascii_mode: false # 显示键盘是否重置为中文模式
   vertical_correction: -5 # 垂直校正
   key_font: MapleMono-NF-CN-Thin.ttf # 键盘字体
   candidate_font: MapleMono-NF-CN-Thin.ttf # 候选字体
@@ -94,6 +94,7 @@ colors:
   color17: &color_tiny_gray 0xD0202020
   color18: &color_tiny_black2 0xFF2D2D2D
   color19: &color_black_ice 0xFF0E377E
+  color20: &color_black_blue 0xFF007D7D
   
 
 # 配色方案
@@ -103,7 +104,7 @@ preset_color_schemes:
     dark_scheme: Darkmode      # 关联的深色方案
     key_text_color: *color_black         # 按键文本颜色（黑）
     back_color: *color_white             # 候选区背景（白）
-    text_color: *color_ice             # 编码颜色（薄荷绿）
+    text_color: *color_black             # 编码颜色（薄荷绿）
     comment_text_color: *color_black     # 注释文本颜色（黑）
     hilited_text_color: *color_black     # 高亮编码文字（黑，浅底显眼）
     hilited_back_color: *color_transparent     # 高亮编码背景（透明）
@@ -153,7 +154,7 @@ preset_color_schemes:
     hilited_candidate_back_color: *color_black_ice # 高亮候选背景（薄荷绿）
     hilited_comment_text_color: *color_white   # 高亮注释文字（白）
     keyboard_back_color: *color_tiny_black     # 键盘背景（深灰黑）
-    key_back_color: *color_gray          # 按键背景（半透明灰）
+    key_back_color: *color_tiny_black2          # 按键背景（半透明灰）
     hilited_key_text_color: *color_black  # 高亮按键文字（黑）
     text_back_color: *color_tiny_black         # 编码区背景（半透明灰）
     hilited_key_back_color: *color_ice  # 高亮按键背景（薄荷绿）
@@ -177,6 +178,7 @@ preset_color_schemes:
     tenter: *color_ice1                  # 回车键文本（黑）
     bnk: *color_tiny_gray                     # 数字键背景（半透明灰）
     tnk: *color_white                     # 数字键文本（白）
+    highlited_key_back_color: *color_black_blue  # 高亮按键背景（薄荷绿）
 
   IceMint_Light:
     name: 浅昼
@@ -268,7 +270,8 @@ preset_keys:
   Return1: { label: "enter", preview: "↩", functional: false, send: "Return" }
   Return2: { label: " ↩ ", send: "Return" }
   Hide: { label: "隐藏", send: "BACK" }
-  BackSpace: { label: " ✕ ", preview: "⇦", repeatable: true, functional: false, send: "BackSpace" }
+  BackSpace: { label: "⌫", preview: "⇦", repeatable: true, functional: false, send: "BackSpace" }
+  BackSpace3: { label: " ⌫ ", preview: "⇦", repeatable: true, functional: false, send: "BackSpace" }
   BackSpace2: { label: "⌫", preview: "⇦", repeatable: true, functional: false, slide_delete: true, send: "BackSpace" }
   space: { repeatable: false, preview: " ", functional: false, slide_cursor: true, label: "——", send: "space" }
   space1: { repeatable: false, label: " ␣ ", functional: false, send: "space" }
@@ -409,6 +412,7 @@ preset_keyboards:
     author: Yexkr
     width: 10
     ascii_mode: 0
+    lock: true
     label_transform: uppercase # 小写标签自动转为大写标签
     keys:
       # 第一行
@@ -457,30 +461,33 @@ preset_keyboards:
     width: 10
     ascii_mode: 1
     keys:
-    - { click: "'", width: 10, key_back_color: "bnk", key_text_color: "tnk" }
-    - { click: "+", width: 10, key_back_color: "bnk", key_text_color: "tnk" }
-    - { click: "1", width: 20, key_back_color: "bnk", key_text_color: "tnk" }
-    - { click: "2", width: 20, key_back_color: "bnk", key_text_color: "tnk" }
-    - { click: "3", width: 20, key_back_color: "bnk", key_text_color: "tnk" }
-    - { click: "%", width: 20, key_back_color: "bnk", key_text_color: "tnk" }
-    - { click: "_", width: 10, key_back_color: "bnk", key_text_color: "tnk" }
-    - { click: "-", width: 10, key_back_color: "bnk", key_text_color: "tnk" }
-    - { click: "4", width: 20, key_back_color: "bnk", key_text_color: "tnk" }
-    - { click: "5", width: 20, key_back_color: "bnk", key_text_color: "tnk" }
-    - { click: "6", width: 20, key_back_color: "bnk", key_text_color: "tnk" }
-    - { click: "BackSpace", width: 20, key_back_color: "bnk", key_text_color: "tnk" }
-    - { click: "@", width: 10, key_back_color: "bnk", key_text_color: "tnk" }
-    - { click: "*", width: 10, key_back_color: "bnk", key_text_color: "tnk" }
-    - { click: "7", width: 20, key_back_color: "bnk", key_text_color: "tnk" }
-    - { click: "8", width: 20, key_back_color: "bnk", key_text_color: "tnk" }
-    - { click: "9", width: 20, key_back_color: "bnk", key_text_color: "tnk" }
-    - { click: "space1", width: 20, key_back_color: "bnk", key_text_color: "tnk" }
-    - { click: "#", width: 10, key_back_color: "bnk", key_text_color: "tnk" }
-    - { click: "Keyboard_default", width: 10, key_back_color: "bnk", key_text_color: "tnk" }
-    - { click: ".", width: 20, key_back_color: "bnk", key_text_color: "tnk" }
-    - { click: "0", width: 20, key_back_color: "bnk", key_text_color: "tnk" }
-    - { click: "=", width: 20, key_back_color: "bnk", key_text_color: "tnk" }
-    - { click: "Return", width: 20 }  # Return 本身没有颜色？可考虑也加上 bnk/tnk 或 benter/tenter
+    # 第一行
+    - { click: "#", width: 12, key_back_color: "bh1", key_text_color: "th1" }
+    - { click: "+", width: 12, key_back_color: "bh1", key_text_color: "th1" }
+    - { click: "1", width: 20, key_back_color: "bh1", key_text_color: "th1" }
+    - { click: "2", width: 20, key_back_color: "bh1", key_text_color: "th1" }
+    - { click: "3", width: 20, key_back_color: "bh1", key_text_color: "th1" }
+    - { click: "%", width: 16, key_back_color: "bh1", key_text_color: "th1" }
+    # 第二行
+    - { click: "_", width: 12, key_back_color: "bh2", key_text_color: "th2" }
+    - { click: "-", width: 12, key_back_color: "bh2", key_text_color: "th2" }
+    - { click: "4", width: 20, key_back_color: "bh2", key_text_color: "th2" }
+    - { click: "5", width: 20, key_back_color: "bh2", key_text_color: "th2" }
+    - { click: "6", width: 20, key_back_color: "bh2", key_text_color: "th2" }
+    - { click: "BackSpace", width: 16, key_back_color: "bh2", key_text_color: "th2" }
+    # 第三行
+    - { click: "@", width: 12, key_back_color: "bh3", key_text_color: "th3" }
+    - { click: "*", width: 12, key_back_color: "bh3", key_text_color: "th3" }
+    - { click: "7", width: 20, key_back_color: "bh3", key_text_color: "th3" }
+    - { click: "8", width: 20, key_back_color: "bh3", key_text_color: "th3" }
+    - { click: "9", width: 20, key_back_color: "bh3", key_text_color: "th3" }
+    - { click: "space1", width: 16, key_back_color: "bh3", key_text_color: "th3" }
+    # 第四行
+    - { click: "Keyboard_default", width: 24, key_back_color: "highlited_key_back_color", key_text_color: "th4" }
+    - { click: ".", width: 20, key_back_color: "bh4", key_text_color: "th4" }
+    - { click: "0", width: 20, key_back_color: "bh4", key_text_color: "th4" }
+    - { click: "=", width: 20, key_back_color: "bh4", key_text_color: "th4" }
+    - { click: "Return", width: 16, key_back_color: "benter", key_text_color: "tenter"}  # Return 本身没有颜色？可考虑也加上 bnk/tnk 或 benter/tenter
 
   func:
     name: 功能
@@ -521,10 +528,11 @@ liquid_keyboard:
   margin_x: 4         # 左右按键间隙的1/2
   fixed_key_bar:      # 固定按键条
     position: left     # 摆放位置（在滚动区域的顶部）
+    width: 20       # 固定按键条宽度
     keys:             # 按键（显示名称为对应的label，不能放太多）
       - Return2
       - space1
-      - BackSpace
+      - BackSpace3
       - liquid_keyboard_exit
   keyboards:          # tab列表
     - history
