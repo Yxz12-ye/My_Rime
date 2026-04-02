@@ -1,4 +1,5 @@
 patch:
+  speller/alphabet: zyxwvutsrqponmlkjihgfedcba1234567890`;/\›
   speller/algebra:
     __patch:
       - wanxiang_algebra:/模糊音      # 确保段落名正确
