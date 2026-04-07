@@ -113,37 +113,38 @@ preset_color_schemes:
     hilited_candidate_text_color: *color_black # 高亮候选文字（白）
     hilited_candidate_back_color: *color_mint # 高亮候选背景（薄荷绿）
     hilited_comment_text_color: *color_black   # 高亮注释文字（黑）
-    keyboard_back_color: *color_gray    # 键盘背景（浅灰）
-    key_back_color: *color_white         # 按键背景（白）
+    keyboard_back_color: 0xFFE9F1F0    # 键盘背景（冷浅灰绿）
+    key_back_color: 0xFFFFFFFF         # 按键背景（白）
     hilited_key_text_color: *color_white # 高亮按键文字（白）
-    text_back_color: *color_gray        # 编码区背景（浅灰）
-    hilited_key_back_color: *color_ice # 高亮按键背景（薄荷绿）
-    key_border_color: *color_tiny_black      # 按键边框（浅绿，弱化）
+    text_back_color: 0xFFE9F1F0        # 编码区背景（冷浅灰绿）
+    hilited_key_back_color: 0xFF58DEC6 # 高亮按键背景（中薄荷绿）
+    key_border_color: 0xFFBFD9D5      # 按键边框（浅灰绿）
     shadow_color: *color_black           # 阴影颜色（黑，半透明可自行定义）
     candidate_separator_color: *color_transparent # 候选分隔线（透明）
-    # 各行按键背景/文本（统一使用白色按键、黑色文字）
-    bh1: *color_white
-    th1: *color_black
-    bh2: *color_white
-    th2: *color_black
-    bh3: *color_white
-    th3: *color_black
-    bh4: *color_ice2
-    th4: *color_black
-    bbs: *color_mint4                     # 退格键背景（白）
-    tbs: *color_black                     # 退格键文本（黑）
-    bkg: *color_ice3                     # 空格键背景（白）
-    tkg: *color_black                     # 空格键文本（薄荷绿）
-    benter: *color_ice4                  # 回车键背景（薄荷绿）
-    tenter: *color_black                  # 回车键文本（白）
-    bnk: *color_white                     # 数字键背景（白）
-    tnk: *color_black                     # 数字键文本（黑）
+    # 各行按键背景/文本（浅色分层，数字键盘不再单调）
+    bh1: 0xFFFFFFFF
+    th1: 0xFF1A2A28
+    bh2: 0xFFF4FCFA
+    th2: 0xFF17312E
+    bh3: 0xFFEAF9F6
+    th3: 0xFF15403A
+    bh4: 0xFFD9F6EF
+    th4: 0xFF0F4A43
+    bbs: 0xFFC4F1E6                     # 退格键背景
+    tbs: 0xFF0F4A43                     # 退格键文本
+    bkg: 0xFFD0F5EC                     # 空格键背景
+    tkg: 0xFF0F4A43                     # 空格键文本
+    benter: 0xFF86EBD8                  # 回车键背景
+    tenter: 0xFF0C3A35                  # 回车键文本
+    bnk: 0xFFEAF9F6                     # 数字键背景
+    tnk: 0xFF15403A                     # 数字键文本
+    highlited_key_back_color: 0xFF52DCC2 # 数字键盘返回键背景
     bck: *color_ice                     # 符号键背景（冰薄荷绿）
   Darkmode:
     name: 冰薄荷·深宵 # 深色主题名称
     light_scheme: default
     key_text_color: *color_white          # 按键文本颜色（白）
-    back_color: *color_tiny_black              # 候选区背景（深灰黑）
+    back_color: 0xFF151C20              # 候选区背景（深灰蓝）
     text_color: *color_ice              # 编码颜色（薄荷绿）
     comment_text_color: *color_white      # 注释文本颜色（白）
     hilited_text_color: *color_white      # 高亮编码文字（白）
@@ -153,32 +154,32 @@ preset_color_schemes:
     hilited_candidate_text_color: *color_tiny_white # 高亮候选文字（黑）
     hilited_candidate_back_color: *color_black_ice # 高亮候选背景（薄荷绿）
     hilited_comment_text_color: *color_white   # 高亮注释文字（白）
-    keyboard_back_color: *color_tiny_black     # 键盘背景（深灰黑）
-    key_back_color: *color_tiny_black2          # 按键背景（半透明灰）
+    keyboard_back_color: 0xFF151C20     # 键盘背景（深灰蓝）
+    key_back_color: 0xFF263137          # 按键背景（深灰蓝）
     hilited_key_text_color: *color_black  # 高亮按键文字（黑）
-    text_back_color: *color_tiny_black         # 编码区背景（半透明灰）
-    hilited_key_back_color: *color_ice  # 高亮按键背景（薄荷绿）
-    key_border_color: *color_tiny_gray        # 按键边框（深灰黑，隐入背景）
+    text_back_color: 0xFF151C20         # 编码区背景（深灰蓝）
+    hilited_key_back_color: 0xFF2AA89A  # 高亮按键背景（青绿）
+    key_border_color: 0x663E5057        # 按键边框（半透明蓝灰）
     shadow_color: *color_black            # 阴影颜色（黑）
     candidate_separator_color: *color_transparent # 候选分隔线（透明）
-    # 各行按键背景/文本（半透明灰底、白字）
-    bh1: *color_tiny_black2
-    th1: *color_ice
-    bh2: *color_tiny_black2
-    th2: *color_ice3
-    bh3: *color_tiny_black2
-    th3: *color_mint1
-    bh4: *color_tiny_black2
-    th4: *color_mint1
-    bbs: *color_tiny_black2                     # 退格键背景（半透明灰）
-    tbs: *color_mint1                     # 退格键文本（白）
-    bkg: *color_tiny_black2                     # 空格键背景（半透明灰）
-    tkg: *color_ice                     # 空格键文本（薄荷绿）
-    benter: *color_black_ice                  # 回车键背景（薄荷绿）
-    tenter: *color_ice1                  # 回车键文本（黑）
-    bnk: *color_tiny_gray                     # 数字键背景（半透明灰）
-    tnk: *color_white                     # 数字键文本（白）
-    highlited_key_back_color: *color_black_blue  # 高亮按键背景（薄荷绿）
+    # 各行按键背景/文本（深色分层，数字键盘层次更明显）
+    bh1: 0xFF313D44
+    th1: 0xFFC9FFF7
+    bh2: 0xFF2C3840
+    th2: 0xFFB9F7ED
+    bh3: 0xFF26333B
+    th3: 0xFFA8F0E2
+    bh4: 0xFF234148
+    th4: 0xFF8DEBD9
+    bbs: 0xFF2B3940                     # 退格键背景
+    tbs: 0xFF9BEEDC                     # 退格键文本
+    bkg: 0xFF274047                     # 空格键背景
+    tkg: 0xFF9CF8E8                     # 空格键文本
+    benter: 0xFF205A65                  # 回车键背景
+    tenter: 0xFFB6FFF5                  # 回车键文本
+    bnk: 0xFF2A3840                     # 数字键背景
+    tnk: 0xFFBFFAF0                     # 数字键文本
+    highlited_key_back_color: 0xFF1A8E8A  # 数字键盘返回键背景
 
   IceMint_Light:
     name: 浅昼
