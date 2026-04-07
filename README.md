@@ -26,10 +26,10 @@ Rime 输入法自定义配置，基于万象拼音 pro。
 ## 主题预览
 
 浅色模式：
-![浅色模式](img/light.jpg)
+![浅色模式](img/light_new.jpg)
 
 深色模式：
-![深色模式](img/dark.jpg)
+![深色模式](img/dark_new.jpg)
 
 ## 鸣谢
 
