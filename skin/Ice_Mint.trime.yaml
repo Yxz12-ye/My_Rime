@@ -580,8 +580,8 @@ tool_bar:
   button_spacing: 5 # 按钮间距
   button_font: [iconfont.ttf] # 按钮字体
   # 左侧固定主按钮配置
-  primary_button: { background: { type: "circle", corner_radius: 10, normal: 0, highlight: "hilited_candidate_button_color", vertical_inset: 4, horizontal_inset: 0 }, foreground: { style: "ic@dots_horizontal", normal: "candidate_text_color", padding: 10 }, action: "menu_keyboard" }
-  hide_button: &hide_button { foreground: { style: "ic@keyboard_close", normal: "candidate_text_color" }, action: "Hide" } # 隐藏按钮
+  primary_button: { background: { type: "circle", corner_radius: 10, bg_normal: "#00000000", bg_hightlight: "hilited_candidate_button_color", vertical_inset: 4, horizontal_inset: 0 }, foreground: { style: "ic@dots_horizontal", fg_normal: "candidate_text_color", padding: 10 }, action: "menu_keyboard" }
+  hide_button: &hide_button { foreground: { style: "ic@keyboard_close", fg_normal: "candidate_text_color" }, action: "Hide" } # 隐藏按钮
   emoji_button: &emoji_button { foreground: { style: "ic@emoticon" }, action: "liquid_keyboard_emoji" } # emoji按钮
   clipboard_button: &clipboard_button { foreground: { style: "ic@clipboard" }, action: "clipboard_window" } # 剪切板按钮
   edit_button: &edit_button { foreground: { style: "ic@cursor_text" }, action: "Keyboard_editor" } # 编辑键盘按钮
