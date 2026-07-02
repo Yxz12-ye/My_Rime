@@ -433,18 +433,18 @@ preset_keyboards:
       - { click: "s", key_back_color: "bh2", key_text_color: "th2", swipe_up: "S", swipe_down: "!", label_symbol: "!" }
       - { click: "d", key_back_color: "bh2", key_text_color: "th2", swipe_up: "D", swipe_down: "'", label_symbol: "'" }
       - { click: "f", key_back_color: "bh2", key_text_color: "th2", swipe_up: "F", swipe_down: "\"", label_symbol: "\"" }
-      - { click: "g", key_back_color: "bh2", key_text_color: "th2", swipe_up: "G", swipe_down: "-", label_symbol: "-" }
+      - { click: "g", key_back_color: "bh2", key_text_color: "th2", swipe_up: "G", swipe_down: "-", label_symbol: "_-=", swipe_left: "_", swipe_right: "=" }
       - { click: "h", key_back_color: "bh2", key_text_color: "th2", swipe_up: "H", swipe_down: ":", label_symbol: ":" }
       - { click: "j", key_back_color: "bh2", key_text_color: "th2", swipe_up: "J", swipe_down: ";", label_symbol: ";" }
-      - { click: "k", key_back_color: "bh2", key_text_color: "th2", swipe_up: "K", swipe_down: "(", label_symbol: "(" }
-      - { click: "l", key_back_color: "bh2", key_text_color: "th2", swipe_up: "L", swipe_down: ")", label_symbol: ")" }
+      - { click: "k", key_back_color: "bh2", key_text_color: "th2", swipe_up: "K", swipe_down: "(){Left}", label_symbol: "()", swipe_left: "(", swipe_right: ")" }
+      - { click: "l", key_back_color: "bh2", key_text_color: "th2", swipe_up: "L", swipe_down: "+", label_symbol: "+" }
       - { width: 5 }
       # 第三行
       - { click: "Shift_L", width: 15, label_symbol: "`", swipe_down: "`", long_click: "Shift_L", double_click: "Shift_L3", composing: "delimiter", key_back_color: "bbs", key_text_color: "tbs" }
-      - { click: "z", long_click: "", key_back_color: "bh3", key_text_color: "th3", swipe_up: "Z", swipe_down: "[", label_symbol: "[" }
-      - { click: "x", key_back_color: "bh3", key_text_color: "th3", swipe_up: "X", swipe_down: "]", label_symbol: "]" }
-      - { click: "c", key_back_color: "bh3", key_text_color: "th3", swipe_up: "C", swipe_down: "{", label_symbol: "{" }
-      - { click: "v", key_back_color: "bh3", key_text_color: "th3", swipe_up: "V", swipe_down: "}", label_symbol: "}" }
+      - { click: "z", long_click: "", key_back_color: "bh3", key_text_color: "th3", swipe_up: "Z", swipe_down: "[]{Left}", label_symbol: "[]", swipe_left: "[", swipe_right: "]" }
+      - { click: "x", key_back_color: "bh3", key_text_color: "th3", swipe_up: "X", swipe_down: "^", label_symbol: "^" }
+      - { click: "c", key_back_color: "bh3", key_text_color: "th3", swipe_up: "C", swipe_down: "{}{Left}", label_symbol: "{}", swipe_left: "{", swipe_right: "}" }
+      - { click: "v", key_back_color: "bh3", key_text_color: "th3", swipe_up: "V", swipe_down: "<>{Left}", label_symbol: "<>", swipe_left: "<", swipe_right: ">" }
       - { click: "b", key_back_color: "bh3", key_text_color: "th3", swipe_up: "B", swipe_down: "/", label_symbol: "/" }
       - { click: "n", key_back_color: "bh3", key_text_color: "th3", swipe_up: "N", swipe_down: "\\", label_symbol: "\\" }
       - { click: "m", key_back_color: "bh3", key_text_color: "th3", swipe_up: "M", swipe_down: "@", label_symbol: "@" }
@@ -572,7 +572,7 @@ liquid_keyboard:
   ascii:              # 西文标点
     type: SINGLE
     name: 英符
-    keys: ',.?!:;/\|*-+=^$`''"^~@#%&()[]{}_'
+    keys: '|*$~#%&'
 
 
 # 工具条配置
