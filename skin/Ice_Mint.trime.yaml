@@ -405,6 +405,22 @@ preset_keys:
 
   fuzhuma: { label: '辅码', send: '`' }
 
+  # 14键按键区域
+  key14qw: { label: 'Q W', send: 'q' }
+  key14er: { label: 'E R', send: 'e' }
+  key14ty: { label: 'T Y', send: 't' }
+  key14ui: { label: 'U I', send: 'u' }
+  key14op: { label: 'O P', send: 'o' }
+  key14as: { label: 'A S', send: 'a' }
+  key14df: { label: 'D F', send: 'd' }
+  key14gh: { label: 'G H', send: 'g' }
+  key14jk: { label: 'J K', send: 'j' }
+  key14l:  { label: ' L ', send: 'l' }
+  key14zx: { label: 'Z X', send: 'z' }
+  key14cv: { label: 'C V', send: 'c' }
+  key14bn: { label: 'B N', send: 'b' }
+  key14m:  { label: ' M ', send: 'm' }
+
 
 
 preset_keyboards:
@@ -512,6 +528,52 @@ preset_keyboards:
       - { click: Keyboard_func1, height: 9, width: 30, key_back_color: keyboard_back_color, hilited_key_back_color: keyboard_back_color, key_text_size: 14, key_border: 0,  }
       - { click: Keyboard_last_lock, width: 40, hint: 返回, key_back_color: "benter", key_text_color: "tenter", key_text_size: 22, key_text_offset_y: -7, key_hint_offset_y: -3, key_symbol_color: th1 }
       - { click: Keyboard_func1, width: 30, key_back_color: keyboard_back_color, hilited_key_back_color: keyboard_back_color, key_text_size: 14, key_border: 0,  }
+  
+  key14:
+    name: 14键
+    author: Yexkr
+    width: 20 # 默认宽度, 100为总宽度
+    ascii_mode: 0
+    lock: true
+    label_transform: uppercase # 小写标签自动转为大写标签
+    keys:
+      # 数字行
+      - { click: "1", width: 10, key_back_color: "bh1", key_text_color: "th1" }
+      - { click: "2", width: 10, key_back_color: "bh1", key_text_color: "th1" }
+      - { click: "3", width: 10, key_back_color: "bh1", key_text_color: "th1" }
+      - { click: "4", width: 10, key_back_color: "bh1", key_text_color: "th1" }
+      - { click: "5", width: 10, key_back_color: "bh1", key_text_color: "th1" }
+      - { click: "6", width: 10, key_back_color: "bh1", key_text_color: "th1" }
+      - { click: "7", width: 10, key_back_color: "bh1", key_text_color: "th1" }
+      - { click: "8", width: 10, key_back_color: "bh1", key_text_color: "th1" }
+      - { click: "9", width: 10, key_back_color: "bh1", key_text_color: "th1" }
+      - { click: "0", width: 10, key_back_color: "bh1", key_text_color: "th1" }
+      # 第一行
+      - { click: "key14qw", key_back_color: "bh1", key_text_color: "th1" }
+      - { click: "key14er", key_back_color: "bh1", key_text_color: "th1" }
+      - { click: "key14ty", key_back_color: "bh1", key_text_color: "th1" }
+      - { click: "key14ui", key_back_color: "bh1", key_text_color: "th1" }
+      - { click: "key14op", key_back_color: "bh1", key_text_color: "th1" }
+      # 第二行
+      - { click: "key14as", key_back_color: "bh2", key_text_color: "th2" }
+      - { click: "key14df", key_back_color: "bh2", key_text_color: "th2" }
+      - { click: "key14gh", key_back_color: "bh2", key_text_color: "th2" }
+      - { click: "key14jk", key_back_color: "bh2", key_text_color: "th2" }
+      - { click: "key14l", key_back_color: "bh2", key_text_color: "th2" }
+      # 第三行
+      - { click: "Shift_L", width: 16, label_symbol: "`", swipe_down: "`", long_click: "Shift_L", double_click: "Shift_L3", composing: "delimiter", key_back_color: "bbs", key_text_color: "tbs" }
+      - { click: "key14zx", width: 17, key_back_color: "bh3", key_text_color: "th3" }
+      - { click: "key14cv", width: 17, key_back_color: "bh3", key_text_color: "th3" }
+      - { click: "key14bn", width: 17, key_back_color: "bh3", key_text_color: "th3" }
+      - { click: "key14m", width: 17, key_back_color: "bh3", key_text_color: "th3" }
+      - { click: "BackSpace2", width: 16, key_back_color: "bbs", key_text_color: "tbs" }
+      # 第四行
+      - { click: "liquid_keyboard_ascii", key_text_size: 18, width: 12, key_back_color: "bh4", key_text_color: "th4" }
+      - { click: "Keyboard_number", width: 13, key_back_color: "bh4", key_text_color: "th4" }
+      - { click: ",", width: 10, key_back_color: "bh4", key_text_color: "th4", swipe_up: "，" }
+      - { click: "space", width: 35, label_symbol: "中/英", long_click: "Mode_switch", key_back_color: "bkg", key_text_color: "tkg" }
+      - { click: ".", width: 10, key_back_color: "bh4", key_text_color: "th4", swipe_up: "。" }
+      - { click: "Return", width: 20, composing: "Return1", key_back_color: "benter", key_text_color: "tenter" }
 
 fallback_colors:
   candidate_text_color: text_color
