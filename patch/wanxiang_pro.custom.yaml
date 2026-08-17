@@ -5,6 +5,7 @@ patch:
       - wanxiang_algebra:/模糊音      # 确保段落名正确
       - wanxiang_algebra:/pro/小鹤双拼
       - wanxiang_algebra:/pro/直接辅助
+      - wanxiang_algebra:/14jian      # 14键适配
   switches/@0/reset: 1
   switches/@1/reset: 1
   user_predict/enable_post_predict: false
