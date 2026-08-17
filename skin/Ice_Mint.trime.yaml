@@ -322,6 +322,7 @@ preset_keys:
   menu_keyboard: { label: "菜单", send: "function", command: "menu_keyboard" }
   clipboard_window: { label: "剪贴", send: "function", command: "clipboard_window" }
   Mode_switch: { toggle: "ascii_mode", functional: false, send: "Mode_switch", states: [ "cn", "en" ] }
+  Mode_keyboard_switch: { toggle: "ascii_mode", functional: false, send: "Eisu_toggle", select: ".ascii", states: [ "中", "En" ] }
   Zenkaku_Hankaku: { toggle: "full_shape", send: "Mode_switch", states: [ "半角", "全角" ] }
   Henkan: { toggle: "simplification", send: "Mode_switch", states: [ "漢字", "汉字" ] }
   Charset_switch: { toggle: "extended_charset", send: "Mode_switch", states: [ "常用", "增广" ] }
@@ -424,11 +425,13 @@ preset_keys:
 
 
 preset_keyboards:
-  default:
+  ascii_keyboard:
     name: 26键
     author: Yexkr
     width: 10
-    ascii_mode: 0
+    ascii_mode: 1
+    reset_ascii_mode: true
+    ascii_keyboard: default
     lock: true
     label_transform: uppercase # 小写标签自动转为大写标签
     keys:
@@ -469,7 +472,7 @@ preset_keyboards:
       - { click: "liquid_keyboard_ascii", key_text_size: 18, width: 12, key_back_color: "bh4", key_text_color: "th4" }
       - { click: "Keyboard_number", width: 13, key_back_color: "bh4", key_text_color: "th4" }
       - { click: ",", key_back_color: "bh4", key_text_color: "th4", swipe_up: "，" }
-      - { click: "space", width: 35, label_symbol: "中/英", long_click: "Mode_switch", key_back_color: "bkg", key_text_color: "tkg" }
+      - { click: "space", width: 35, label_symbol: "中/英", long_click: "Mode_keyboard_switch", key_back_color: "bkg", key_text_color: "tkg" }
       - { click: ".", key_back_color: "bh4", key_text_color: "th4", swipe_up: "。" }
       - { click: "Return", width: 20, composing: "Return1", key_back_color: "benter", key_text_color: "tenter" }
   
@@ -529,11 +532,13 @@ preset_keyboards:
       - { click: Keyboard_last_lock, width: 40, hint: 返回, key_back_color: "benter", key_text_color: "tenter", key_text_size: 22, key_text_offset_y: -7, key_hint_offset_y: -3, key_symbol_color: th1 }
       - { click: Keyboard_func1, width: 30, key_back_color: keyboard_back_color, hilited_key_back_color: keyboard_back_color, key_text_size: 14, key_border: 0,  }
   
-  key14:
+  default:
     name: 14键
     author: Yexkr
     width: 20 # 默认宽度, 100为总宽度
     ascii_mode: 0
+    reset_ascii_mode: true
+    ascii_keyboard: ascii_keyboard
     lock: true
     label_transform: uppercase # 小写标签自动转为大写标签
     keys:
@@ -571,7 +576,7 @@ preset_keyboards:
       - { click: "liquid_keyboard_ascii", key_text_size: 18, width: 12, key_back_color: "bh4", key_text_color: "th4" }
       - { click: "Keyboard_number", width: 13, key_back_color: "bh4", key_text_color: "th4" }
       - { click: ",", width: 10, key_back_color: "bh4", key_text_color: "th4", swipe_up: "，" }
-      - { click: "space", width: 35, label_symbol: "中/英", long_click: "Mode_switch", key_back_color: "bkg", key_text_color: "tkg" }
+      - { click: "space", width: 35, label_symbol: "中/英", long_click: "Mode_keyboard_switch", key_back_color: "bkg", key_text_color: "tkg" }
       - { click: ".", width: 10, key_back_color: "bh4", key_text_color: "th4", swipe_up: "。" }
       - { click: "Return", width: 20, composing: "Return1", key_back_color: "benter", key_text_color: "tenter" }
 
@@ -647,7 +652,7 @@ tool_bar:
   emoji_button: &emoji_button { foreground: { style: "ic@emoticon" }, action: "liquid_keyboard_emoji" } # emoji按钮
   clipboard_button: &clipboard_button { foreground: { style: "ic@clipboard" }, action: "clipboard_window" } # 剪切板按钮
   edit_button: &edit_button { foreground: { style: "ic@cursor_text" }, action: "Keyboard_editor" } # 编辑键盘按钮
-  ascii_mode_button: &ascii_mode_button { foreground: { option_styles: [ "中", "En" ], font_size: 18, padding: 10 }, action: "Mode_switch" } # 中英切换按钮
+  ascii_mode_button: &ascii_mode_button { foreground: { option_styles: [ "中", "En" ], font_size: 18, padding: 10 }, action: "Mode_keyboard_switch" } # 中英切换按钮
   full_shape_button: &full_shape_button { foreground: { option_styles: [ "ic@moon_full", "ic@moon_new" ] }, action: "Zenkaku_Hankaku" } # 全半角切换按钮
   menu_button: &menu_button
     foreground:
