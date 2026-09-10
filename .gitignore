@@ -1,0 +1,12 @@
+# 构建临时目录
+/.build/
+
+# 构建产物
+/Trime-*.zip
+
+# Python
+__pycache__/
+*.py[cod]
+
+# 版本目录
+/.version
