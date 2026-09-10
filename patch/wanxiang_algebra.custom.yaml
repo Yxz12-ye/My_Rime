@@ -1,9 +1,0 @@
-patch:
-  模糊音: 
-    __append:
-      # en - eng
-      - derive/(ē|é|ě|è|e)ng(.*)$/$1n$2
-      - derive/(ē|é|ě|è|e)n(.*)$/$1ng$2
-      # in - ing
-      - derive/(ī|í|ǐ|ì|i)ng(.*)$/$1n$2
-      - derive/(ī|í|ǐ|ì|i)n(.*)$/$1ng$2

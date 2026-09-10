@@ -1,3 +1,4 @@
+# 修复反查无法使用双拼的问题
 patch:
   speller/algebra:
     __include: wanxiang_algebra:/reverse/小鹤双拼

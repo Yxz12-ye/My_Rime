@@ -2,7 +2,8 @@ patch:
   speller/alphabet: zyxwvutsrqponmlkjihgfedcba1234567890`;/\›
   speller/algebra:
     __patch:
-      - wanxiang_algebra:/模糊音      # 确保段落名正确
+      - wanxiang_algebra:/模糊音_en_eng      # 模糊音en<->eng
+      - wanxiang_algebra:/模糊音_in_ing      # 模糊音in<->ing
       - wanxiang_algebra:/pro/小鹤双拼
       - wanxiang_algebra:/pro/直接辅助
   switches/@0/reset: 1
