@@ -1,0 +1,187 @@
+patch:
+  speller/algebra:
+    __patch:
+      #- 模糊音                                  # 这里启用后，本文件末尾可配置具体条目
+      - wanxiang_algebra:/模糊音_en_eng      # 模糊音en<->eng
+      - wanxiang_algebra:/模糊音_in_ing      # 模糊音in<->ing
+      - wanxiang_algebra:/pro/小鹤双拼             # 可选输入方案名称：全拼、自然码, 自然龙, 小鹤双拼, 搜狗双拼, 微软双拼, 智能ABC, 紫光双拼, 国标双拼，龙三
+      - wanxiang_algebra:/pro/直接辅助            #辅助码升级为：直接辅助和间接辅助两种类型，都是句中任意，不同点在于直接辅助是nire=你  而间接则需要/引导  ni/re=你 ，在这个基础上直接辅助支持拼音后任意位置数字声调参与，间接辅助声调在/引导前参与
+      #- 自然码提权                               #本文件末尾，有自然码和小鹤的可以用
+##########################以上格式受指令初始化控制，最好保持格式不变，如果发生变更请不要使用指令修改相关数据#####################################
+    
+  switches:
+    - name: english_word   #中英单词
+      states: [ 中, 英 ]
+    - name: chaifen        #拆分滤镜
+      states: [ 隐, 拆 ]   
+    - name: pinyin         #拼音滤镜
+      states: [ 字, pīn ]
+    - name: charset_filter  #常用字滤镜
+      states: [ 全, 常 ]
+      reset: 1
+    - name: sentence
+      states: [ 关, 虎句 ]
+      reset: 0
+    - name: word
+      states: [ 关, 虎词 ]
+      reset: 0
+    - name: char
+      states: [ 关, 虎单 ]
+      reset: 0
+    - name: yin
+      states: [ 关, 音码 ]
+      reset: 1
+    - name: completion
+      states: [ 关, 提示 ]
+    - name: super_tips
+      states: [ off, tips ]
+    - name: tone_display
+      states: [ 关, 句pīn ] 
+    - options: [ comment_off, fuzhu_hint]  #拼音辅助码滤镜
+      states: [ 注关, 辅开]
+    - name: chaifen_switch               #开启后在候选的注释里面实时显示辅助码的拆分提醒优先级高于普通辅助提醒，不开启则采用系统配置，快捷键配套ctrl+c,影响的是comment_format，归属：super_comment.lua
+      states: [ 拆分关, 拆分开 ]
+    - name: ascii_mode  # 中英输入状态
+      states: [中文, 英文]
+      reset: 1
+    - name: ascii_punct  # 中英标点
+      states: [中标, 英标]
+      reset: 1
+    - name: full_shape
+      states: [ 半角, 全角 ]
+    - options: [ s2s, s2t, s2hk, s2tw ]
+      states: [ 简体, 通繁, 港繁, 臺繁 ]
+    - name: emoji
+      states: [ 🙃, 😄 ]
+    - name: udpf_switch
+      states: [ 关, U编]
+    - name: chinese_english
+      states: [ 关, 翻译 ]
+  
+  # 输入引擎
+
+  engine/processors/@before0: lua_processor@*quick_symbol_text2  #重复上屏
+  engine/segmentors/@before4: affix_segmentor@yin_add_user
+  engine/translators/@before1: lua_translator@*switch_translator
+  engine/translators/@before6: lua_translator@*set_schema_pro
+  engine/translators/+: 
+    - lua_translator@*wj                     #文件管理
+    - table_translator@tiger_en
+    - script_translator@yin_add_user
+    - history_translator@historyDM           # 重复上屏 电脑
+    - history_translator@historyDM3          # 重复上屏 电脑3
+    - history_translator@historySJ           # 重复上屏 手机
+  engine/filters/@before6: lua_filter@*db
+  engine/filters/@before7: lua_filter@*temporary_word
+  engine/filters/+:
+    - lua_filter@*read
+    - lua_filter@*auto_commit
+    - lua_filter@*chaifen
+    - lua_filter@*unicode_display
+    - lua_filter@*switch_filter
+    - uniquifier
+    
+  super_processor:
+    limit_repeated: false
+
+  charset/@0/addlist/+: ["勹丶𠂇丨丿扌亻辶讠刂囗阝屮凵厶𠂉㐄耂氵龵肀宀灬彐纟冂冖廾疋丬衤忄牜彡攵朩卩礻冫夂亠爫糸廴㠯罒匚艹禸疒钅壴犭乛亾饣虍卌丌攴頁㡀釒侖車艸の乀亅兎円曱甴鬥𠄏"]
+
+  recognizer/patterns/+:
+      yin_add_user: "^[A-Za-z']*`$|^'[A-Za-z']*$"
+      add_user_dict: "^`[A-Za-z']*$"   # 虎码自造词
+      semicolon: ";;"
+      wj: "^/wj.*$"
+    
+  punctuator:
+    digit_separators: ":,."
+    __include: new_symbols:/symbol_table
+    half_shape/+:
+      ';' : [ ：, ； ]
+  
+  key_binder/bindings/+: 
+    - { when: has_menu, accept: semicolon, send: 2 } #分号用于次选，微软、搜狗双拼不可启用
+    - { when: has_menu, accept: "Control+m", toggle: english_word } #通过快捷键Control+m开关英文
+    - { when: has_menu, accept: "Control+q", toggle: yin } #通过快捷键Control+q开关音码
+    - { when: has_menu, accept: "Control+y", toggle: pinyin } #通过快捷键Control+y显示注音
+    - { when: has_menu, accept: "Control+z", toggle: chaifen } #通过快捷键Control+z开关拆分
+    - { when: has_menu, accept: "Control+r", toggle: completion } #通过快捷键Control+r开关输入长度为3时的completion
+    - { when: has_menu, accept: "Control+a", toggle: sentence } #使用快捷键Control+a开关虎句
+    - { when: has_menu, accept: "Control+s", toggle: word } #通过快捷键Control+s开关虎词
+    - { when: has_menu, accept: "Control+d", toggle: char } #通过快捷键Control+d开关虎单
+  
+  speller/alphabet: zyxwvutsrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA7890;*/\[]
+  speller/initials: zyxwvutsrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA;\[]
+  speller/auto_select: true
+  speller/auto_select_pattern: ^;\w+
+  
+  historySJ:
+    input: z
+    size: 3
+    initial_quality: 99
+
+  historyDM:
+    input: "["
+    size: 99
+    initial_quality: 0
+
+  historyDM3:
+    input: "]"
+    size: 99
+    initial_quality: 0
+    
+  wanxiang_reverse:
+  wanxiang_lookup:
+    key: "‡"   
+
+  wx_english:
+    __patch: wanxiang_pro.schema.yaml:/wanxiang_english
+
+  # 虎码造词制造
+  add_user_dict:
+    tag: add_user_dict
+    dictionary: tiger
+    prism: wxh
+    initial_quality: -1
+    user_dict: zc
+    enable_completion: true # 提前显示尚未输入完整码的字〔仅 table_translator 有效〕
+    enable_user_dict: true
+    spelling_hints: 50
+    enable_auto_phrase: true    # lua造词功能，在custom开启，相关功能位于super_comment_preedit，开启后：模型能造的句子不造词，现有的词不造词，只造词库没有的，选词可造词
+    comment_format:
+    prefix: "`"
+    tips: "〔虎〕"
+
+  # 拼音反查('前缀或`后缀)
+  yin_add_user:
+    tag: yin_add_user
+    dictionary: wanxiang_pro
+    initial_quality: -1
+    user_dict: zc
+    enable_completion: true # 提前显示尚未输入完整码的字〔仅 table_translator 有效〕
+    enable_user_dict: true
+    spelling_hints: 50
+    enable_auto_phrase: true    # lua造词功能，在custom开启，相关功能位于super_comment_preedit，开启后：模型能造的句子不造词，现有的词不造词，只造词库没有的，选词可造词
+    comment_format:
+    prefix: "'"
+    suffix: "`"
+    tips: "〔音〕"
+    
+  sentence:
+    dictionary: tiger
+    prism: wxh
+    user_dict: custom_phrase/zaoci
+    db_class: stabledb
+    enable_completion: true
+    enable_sentence: true
+    initial_quality: 99
+    spelling_hints: 50
+    comment_format:
+      - xform/~[A-Za-z]*//
+
+  char_word:
+    dictionary: tigress
+    user_dict: custom_phrase/user
+    db_class: stabledb
+    enable_completion: false # 补全提示
+    enable_sentence: false   
+    initial_quality: 9999
