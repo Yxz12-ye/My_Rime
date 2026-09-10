@@ -4,6 +4,8 @@ Rime 输入法自定义配置，基于[万象拼音 pro](https://github.com/amzx
 
 本仓库只保存「补丁」与「皮肤」，完整产物由 `build.py` 从上游拉取并叠加生成，避免把 40MB+ 的词库放进 git。
 
+还有基于llm的纠错, 不过效果一般, 详细见[这里](./patch/lua/wanxiang/README.md)
+
 ## 快速开始
 
 ```powershell
