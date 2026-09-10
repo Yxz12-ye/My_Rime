@@ -1,0 +1,121 @@
+metadata:
+  app_name: Xime
+  app_version: ">=2.4.2"
+  platform: android
+  config_version: 1
+  generator: "Ice Mint keyboard port"
+
+xime_index:
+  base_urls:
+    - "https://cdn.jsdelivr.net/gh/ximeiorg/xime-index/"
+    - "https://fastly.jsdelivr.net/gh/ximeiorg/xime-index/"
+    - "https://index.ximei.me/"
+    - "https://raw.githubusercontent.com/ximeiorg/xime-index/refs/heads/main/"
+
+style:
+  font_size: 14
+  candidate_count: 5
+  show_code_hint: true
+  horizontal: true
+  color_scheme: ice_mint
+
+color_schemes:
+  ice_mint:
+    name: "冰薄荷"
+    primary_color: 0x2AA89A
+
+keyboard:
+  colors:
+    keyboard_bg_color: 0xE9F1F0
+    keyboard_bg_color_dark: 0x151C20
+    key_bg_color: 0xFFFFFF
+    key_bg_color_dark: 0x263137
+    candidate_bar_bg_color: 0xE9F1F0
+    candidate_bar_bg_color_dark: 0x151C20
+    key_text_color: 0x1A2A28
+    key_text_color_dark: 0xC9FFF7
+    candidate_text_color: 0x1A2A28
+    candidate_text_color_dark: 0xE8FFFB
+    special_key_bg_color: 0x86EBD8
+    special_key_bg_color_dark: 0x205A65
+  key:
+    corner_radius: 8
+  shadow:
+    enabled: false
+
+  # Ice Mint 26 键中文布局。上滑改为符号输入；下滑数字/符号作为备用输入。
+  qwerty:
+    button_layout: standard
+    layout:
+      rows:
+        - [q, w, e, r, t, y, u, i, o, p]
+        - [a, s, d, f, g, h, j, k, l]
+        - [z, x, c, v, b, n, m]
+    keys:
+      q: { tap: "q", swipe_up: "!", swipe_down: "1" }
+      w: { tap: "w", swipe_up: "@", swipe_down: "2" }
+      e: { tap: "e", swipe_up: "#", swipe_down: "3" }
+      r: { tap: "r", swipe_up: "$", swipe_down: "4" }
+      t: { tap: "t", swipe_up: "%", swipe_down: "5" }
+      y: { tap: "y", swipe_up: "^", swipe_down: "6" }
+      u: { tap: "u", swipe_up: "&", swipe_down: "7" }
+      i: { tap: "i", swipe_up: "*", swipe_down: "8" }
+      o: { tap: "o", swipe_up: "(", swipe_down: "9" }
+      p: { tap: "p", swipe_up: ")", swipe_down: "0" }
+      a: { tap: "a", swipe_up: "?", swipe_down: "?" }
+      s: { tap: "s", swipe_up: "'", swipe_down: "!" }
+      d: { tap: "d", swipe_up: "\"", swipe_down: "'" }
+      f: { tap: "f", swipe_up: "-", swipe_down: "\"" }
+      g: { tap: "g", swipe_up: ":", swipe_down: "-" }
+      h: { tap: "h", swipe_up: ";", swipe_down: ":" }
+      j: { tap: "j", swipe_up: "+", swipe_down: ";" }
+      k: { tap: "k", swipe_up: "=", swipe_down: "()" }
+      l: { tap: "l", swipe_up: "_", swipe_down: "+" }
+      z: { tap: "z", swipe_up: "[", swipe_down: "[]" }
+      x: { tap: "x", swipe_up: "]", swipe_down: "^" }
+      c: { tap: "c", swipe_up: "{", swipe_down: "{}" }
+      v: { tap: "v", swipe_up: "}", swipe_down: "<>" }
+      b: { tap: "b", swipe_up: "/", swipe_down: "/" }
+      n: { tap: "n", swipe_up: "\\", swipe_down: "\\" }
+      m: { tap: "m", swipe_up: "`", swipe_down: "|" }
+      "'": { tap: { label: ",", value: "," }, swipe_up: { label: ".", value: "." } }
+      earth: { tap: { label: "中", action: "toggle_ascii" } }
+
+  # Ice Mint 的英文模式沿用同一组 26 键；上滑同样输入符号。
+  qwerty_en:
+    button_layout: standard
+    layout:
+      rows:
+        - [q, w, e, r, t, y, u, i, o, p]
+        - [a, s, d, f, g, h, j, k, l]
+        - [z, x, c, v, b, n, m]
+    keys:
+      q: { tap: "q", swipe_up: "!", swipe_down: "1" }
+      w: { tap: "w", swipe_up: "@", swipe_down: "2" }
+      e: { tap: "e", swipe_up: "#", swipe_down: "3" }
+      r: { tap: "r", swipe_up: "$", swipe_down: "4" }
+      t: { tap: "t", swipe_up: "%", swipe_down: "5" }
+      y: { tap: "y", swipe_up: "^", swipe_down: "6" }
+      u: { tap: "u", swipe_up: "&", swipe_down: "7" }
+      i: { tap: "i", swipe_up: "*", swipe_down: "8" }
+      o: { tap: "o", swipe_up: "(", swipe_down: "9" }
+      p: { tap: "p", swipe_up: ")", swipe_down: "0" }
+      a: { tap: "a", swipe_up: "?", swipe_down: "?" }
+      s: { tap: "s", swipe_up: "'", swipe_down: "!" }
+      d: { tap: "d", swipe_up: "\"", swipe_down: "=" }
+      f: { tap: "f", swipe_up: "-", swipe_down: "_" }
+      g: { tap: "g", swipe_up: ":", swipe_down: "-" }
+      h: { tap: "h", swipe_up: ";", swipe_down: ":" }
+      j: { tap: "j", swipe_up: "+", swipe_down: ";" }
+      k: { tap: "k", swipe_up: "=", swipe_down: "()" }
+      l: { tap: "l", swipe_up: "_", swipe_down: "+" }
+      z: { tap: "z", swipe_up: "[", swipe_down: "[]" }
+      x: { tap: "x", swipe_up: "]", swipe_down: "^" }
+      c: { tap: "c", swipe_up: "{", swipe_down: "{}" }
+      v: { tap: "v", swipe_up: "}", swipe_down: "<>" }
+      b: { tap: "b", swipe_up: "/", swipe_down: "/" }
+      n: { tap: "n", swipe_up: "\\", swipe_down: "\\" }
+      m: { tap: "m", swipe_up: "|", swipe_down: "@" }
+      # fullref 中的附加键，供 Xime 底部控制条使用。
+      "'": { tap: { label: ",", value: "," }, swipe_up: { label: ".", value: "." } }
+      earth: { tap: { label: "中", action: "toggle_ascii" } }
