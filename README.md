@@ -2,6 +2,8 @@
 
 Rime 输入法自定义配置，基于[万象拼音 pro](https://github.com/amzxyz/rime-wanxiang)，提供 **万象虎** 与 **小鹤双拼** 两套方案。
 
+注: **万象虎方案已经停止维护**, 后续会全力维护小鹤双拼的patch, 以及Xime的键盘布局
+
 本仓库只保存「补丁」与「皮肤」，完整产物由 `build.py` 从上游拉取并叠加生成，避免把 40MB+ 的词库放进 git。
 
 还有基于llm的纠错, 不过效果一般, 详细见[这里](./patch/lua/wanxiang/README.md)
