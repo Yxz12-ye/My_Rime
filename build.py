@@ -50,6 +50,13 @@ TIMEOUT = 120
 RETRIES = 3
 CHUNK = 1 << 20
 
+# 固定请求「不使用传输压缩」。不能依赖 HTTP 库的自动解压:
+#   requests/urllib3 会加 Accept-Encoding: gzip 并透明解压, 但 Content-Length
+#   仍是压缩后的大小, 于是校验报「期望 22 KB, 实际 59 KB」;
+#   urllib 不会自动解压, 于是把 gzip 流原样写进文件, 产物直接损坏。
+# 这里统一要求 identity, 服务端/代理若仍然压缩则按 Content-Encoding 自行解压。
+ACCEPT_ENCODING = "identity"
+
 SCHEMES = {
     "wxh": {
         "key": "wxh",
@@ -99,7 +106,9 @@ HTTP_BACKEND = "requests" if _requests() else "urllib"
 
 def http_get_json(url: str) -> dict:
     """请求 JSON 接口（GitHub API）。"""
-    headers = {"User-Agent": "trime-build-script", "Accept": "application/vnd.github+json"}
+    headers = _with_identity_encoding(
+        {"User-Agent": "trime-build-script", "Accept": "application/vnd.github+json"}
+    )
     reqs = _requests()
     if reqs is not None:
         resp = reqs.get(url, headers=headers, timeout=TIMEOUT)
@@ -112,8 +121,283 @@ def http_get_json(url: str) -> dict:
         return json.loads(r.read().decode("utf-8"))
 
 
-def http_download(url: str, dest: Path, desc: str = "") -> Path:
-    """下载文件到 dest，带重试；返回 dest。"""
+def _identity_headers() -> dict:
+    """请求头: 不让服务端/中间代理对响应体做传输压缩。"""
+    return {"User-Agent": "trime-build-script", "Accept-Encoding": ACCEPT_ENCODING}
+
+
+def _with_identity_encoding(headers: dict) -> dict:
+    """把调用方给的请求头补上 identity（显式给了别的值则尊重调用方）。"""
+    merged = dict(headers)
+    merged.setdefault("Accept-Encoding", ACCEPT_ENCODING)
+    return merged
+
+
+def _iter_chunks(resp, size: int = CHUNK):
+    """把 requests / urllib 两种响应统一成「不断产出未解压的 bytes 块」。
+
+    requests 分支必须走 resp.raw.stream(..., decode_content=False): 读到的是未解压
+    的原始字节, 与下面的 Content-Encoding 处理配套。不能混用 iter_content(), 它会按
+    urllib3 的策略解码, 与自行解压叠加后会导致大小/内容不一致。
+    """
+    raw = getattr(resp, "raw", None)
+    stream = getattr(raw, "stream", None)
+    if callable(stream):
+        for chunk in stream(size, decode_content=False):
+            if chunk:
+                yield chunk
+        return
+    read = getattr(resp, "read", None)
+    if callable(read):
+        while True:
+            chunk = read(size)
+            if not chunk:
+                return
+            yield chunk
+        return
+    for chunk in resp:
+        if chunk:
+            yield chunk
+
+
+def _open_stream_requests(url: str, headers: dict):
+    """requests 后端: 打开流式响应; Response.__exit__ 会释放连接。"""
+    reqs = _requests()
+    session = reqs.Session()
+    session.headers.update(headers)
+    resp = session.get(url, stream=True, timeout=TIMEOUT)
+    resp.raw.decode_content = False  # 原始字节由 _iter_chunks + _Decoder 处理
+    return resp
+
+
+def _open_stream_urllib(url: str, headers: dict):
+    """urllib 后端: 打开流式响应, 失败时关闭连接再抛出。"""
+    import urllib.request
+
+    opener = urllib.request.build_opener()
+    try:
+        return opener.open(urllib.request.Request(url, headers=headers), timeout=TIMEOUT)
+    except BaseException:
+        opener.close()
+        raise
+
+
+class _Decoder:
+    """按 Content-Encoding 流式解压, 并区分「正常结束」与「流被截断」。
+
+    - deflate: 服务端可能给 zlib 包装 (RFC 1950) 也可能给裸 deflate (RFC 1951),
+      故嗅探头两个字节: 判定为 zlib 就按 zlib 解, 否则按裸 deflate 解; 判断不了的
+      一两字节先缓存, 解压中途再出错也可以切到另一种模式重来。
+    - 结束时检查 decompressor.eof: 为假说明压缩流没读完（连接被截断、代理截流、
+      服务端少发数据）, 必须报错交给上层重试, 而不是把半截文件当成功。
+    """
+
+    def __init__(self, encoding: str):
+        name = (encoding or "").strip().lower()
+        self.name = name
+        self._pending = b""
+        self._wrote = 0
+        self._tried_raw = False
+        self._zlib = None
+        if not name or name in ("identity", "none", "chunked"):
+            self.encoding = "identity"
+        elif name in ("gzip", "x-gzip", "zlib", "deflate"):
+            self.encoding = name
+            self._zlib = _zlib()
+            self._dec = self._make(47)  # gzip 与 zlib 头都自动识别
+        else:
+            die(f"不支持的响应压缩格式 Content-Encoding: {encoding}")
+
+    @property
+    def active(self) -> bool:
+        return self._zlib is not None
+
+    def _make(self, wbits: int):
+        return self._zlib.decompressobj(wbits)
+
+    def _raw(self) -> None:
+        """改按裸 deflate 重来, 并把尚未判定格式时缓存的字节一起重喂。"""
+        self._dec = self._make(-15)
+        self._tried_raw = True
+        if self._pending:
+            buffered, self._pending = self._pending, b""
+            self._dec.decompress(buffered)
+
+    def _can_retry_raw(self) -> bool:
+        """能否改按裸 deflate 重来。
+
+        重喂的是当前分块（加上未判定的缓存字节）, 丢弃它们之前在 zlib 模式下产出的
+        数据, 因此不会重复输出; 只要还没试过裸模式就允许切换。
+        """
+        return self.name == "deflate" and not self._tried_raw
+
+    @staticmethod
+    def _sniff(chunk: bytes) -> str:
+        """嗅探 deflate 头部: "zlib" / "raw" / "undecided"（还判断不了）。"""
+        if not chunk:
+            return "undecided"
+        if len(chunk) < 2:
+            # 第一字节 CM 必须是 8 才可能是 zlib, 但校验字节要第二个字节才能算
+            return "undecided" if (chunk[0] & 0x0F) == 8 else "raw"
+        if (chunk[0] & 0x0F) == 8 and ((chunk[0] << 8) | chunk[1]) % 31 == 0:
+            return "zlib"
+        return "raw"
+
+    def _finish_member(self) -> bytes:
+        """gzip 允许多个成员拼接: 本成员读完就再开一个继续解, 否则后续成员会丢。"""
+        extra = b""
+        for _ in range(2):
+            if not self._dec.eof or self.name not in ("gzip", "x-gzip"):
+                return extra
+            leftover = self._dec.unused_data
+            if not leftover:
+                return extra
+            self._dec = self._make(47)
+            extra += self._dec.decompress(leftover)
+        return extra
+
+    def feed(self, chunk: bytes) -> bytes:
+        """喂入一段原始字节, 返回解压出的数据（可能为空）。"""
+        if not self.active:
+            return chunk
+        if self.name == "deflate" and not self._tried_raw:
+            if not self._pending and len(chunk) < 2:
+                self._pending = chunk  # 头两字节不够, 等下一块再判定
+                return b""
+            how = self._sniff(self._pending + chunk)
+            if how == "undecided":
+                self._pending += chunk
+                return b""
+            if how == "raw":
+                self._raw()
+            chunk = self._pending + chunk
+            self._pending = b""
+        out = b""
+        for _ in range(2):
+            try:
+                out = self._dec.decompress(chunk)
+                break
+            except self._zlib.error as exc:
+                if not self._can_retry_raw():
+                    raise OSError(f"响应解压失败 ({self.name}): {exc}") from exc
+                self._raw()
+        else:
+            raise OSError(f"响应解压失败 ({self.name}): 两种 deflate 格式都无法解析")
+        out += self._finish_member()
+        self._wrote += len(out)
+        return out
+
+    def finish(self) -> bytes:
+        """流结束: 补喂缓存, flush 剩余数据, 并确认压缩流完整。"""
+        if not self.active:
+            return b""
+        if self._pending:
+            # 整个响应只有 1 个字节: 无法构成任何完整压缩流
+            self._pending = b""
+            raise OSError(f"响应压缩数据不完整 ({self.name}): 数据不足一个压缩头")
+        tail = self._dec.flush()
+        if self._dec.eof:
+            return tail
+        raise OSError(
+            f"响应压缩流被截断 ({self.name}): 解压器未到达流末尾, 数据不完整"
+        )
+
+
+def _zlib():
+    import zlib
+
+    return zlib
+
+
+def _write_body(chunks, tmp: Path, dec: _Decoder, on_chunk=None) -> int:
+    """把响应体写进临时文件（需要时边读边解压）, 返回落盘字节数。
+
+    on_chunk(落盘字节, 已读字节) 每块调用一次, 用于刷新进度。
+    """
+    written = read = 0
+    with tmp.open("wb") as fh:
+        for chunk in chunks:
+            read += len(chunk)
+            out = dec.feed(chunk)
+            if out:
+                fh.write(out)
+                written += len(out)
+            if on_chunk is not None:
+                on_chunk(written, read)
+        tail = dec.finish()  # 结尾校验: 压缩流被截断会在这里抛错
+        if tail:
+            fh.write(tail)
+            written += len(tail)
+    if on_chunk is not None:
+        on_chunk(written, read)
+    return written
+
+
+def _check_file_magic(path: Path) -> None:
+    """按扩展名做一次廉价的文件头校验, 挡住「传输层把内容搞坏」的情况。"""
+    with path.open("rb") as fh:
+        head = fh.read(4)
+    name = path.name.lower()
+    if name.endswith(".zip"):
+        if head[:4] != b"PK\x03\x04":
+            raise OSError(f"内容不是 zip (文件头 {head!r}), 疑似传输损坏或被改写")
+    elif name.endswith(".gz"):
+        if head[:2] != b"\x1f\x8b":
+            raise OSError(f"内容不是 gzip (文件头 {head!r}), 疑似已被解压或损坏")
+
+
+def _download_once(url: str, dest: Path, desc: str, tmp: Path,
+                   expected_size: int | None) -> int:
+    """单次尝试: 流式下载 -> 必要时解压 -> 大小校验 -> 原子替换 dest。"""
+    started = time.time()
+    with _open_stream(url, _identity_headers()) as resp:
+        status = getattr(resp, "status_code", None)
+        if status is None:
+            status = getattr(resp, "status", 200)
+        raise_for_status = getattr(resp, "raise_for_status", None)
+        if callable(raise_for_status):
+            raise_for_status()
+        if not 200 <= int(status) < 300:
+            raise OSError(f"HTTP {status}")
+
+        # 已要求 identity; 服务端/代理若仍然压缩, 这里按声明自行解压
+        headers = resp.headers
+        declared = int(headers.get("Content-Length") or 0)
+        dec = _Decoder(headers.get("Content-Encoding"))
+        # 压缩响应的 Content-Length 是压缩后的大小, 进度按原始大小算
+        bar_total = expected_size if (dec.active and expected_size) else declared
+        written = _write_body(_iter_chunks(resp), tmp, dec, on_chunk=_Progress(bar_total, started))
+
+    if dec.active:
+        log(f"        服务端返回 {dec.name} 压缩响应, 已解压为原始文件")
+
+    if written == 0:
+        raise OSError("下载内容为空")
+    if expected_size and written != expected_size:
+        raise OSError(f"大小不符: 期望 {expected_size} 字节, 实际 {written} 字节")
+    if declared and not dec.active and written != declared:
+        raise OSError(f"大小不符: 期望 {declared} 字节 (Content-Length), 实际 {written} 字节")
+
+    _check_file_magic(tmp)
+    tmp.replace(dest)
+    log(f"完成 {desc}: {written / 1e6:.1f} MB, 用时 {time.time() - started:.1f}s")
+    return written
+
+
+def _open_stream(url: str, headers: dict):
+    if _requests() is not None:
+        return _open_stream_requests(url, headers)
+    return _open_stream_urllib(url, headers)
+
+
+def http_download(url: str, dest: Path, desc: str = "",
+                  expected_size: int | None = None) -> Path:
+    """下载文件到 dest, 带重试; 返回 dest。
+
+    落盘的一定是「未压缩的原始文件」: 请求显式要求 identity, 服务端/代理若仍然
+    返回压缩内容则按 Content-Encoding 解压后再写入。expected_size 是上游声明的
+    原始大小（如 GitHub API 的 asset["size"]）, 用于端到端校验。
+    """
     desc = desc or dest.name
     dest.parent.mkdir(parents=True, exist_ok=True)
     last_err: Exception | None = None
@@ -122,43 +406,7 @@ def http_download(url: str, dest: Path, desc: str = "") -> Path:
         tmp = dest.with_name(dest.name + ".part")
         try:
             log(f"下载 {desc} (第 {attempt}/{RETRIES} 次) <- {url}")
-            got = 0
-            started = time.time()
-            reqs = _requests()
-            if reqs is not None:
-                with reqs.get(url, stream=True, timeout=TIMEOUT,
-                              headers={"User-Agent": "trime-build-script"}) as resp:
-                    resp.raise_for_status()
-                    total = int(resp.headers.get("Content-Length") or 0)
-                    with tmp.open("wb") as fh:
-                        for chunk in resp.iter_content(CHUNK):
-                            if not chunk:
-                                continue
-                            fh.write(chunk)
-                            got += len(chunk)
-                            _progress(got, total, started)
-            else:
-                import urllib.request
-
-                req = urllib.request.Request(url, headers={"User-Agent": "trime-build-script"})
-                with urllib.request.urlopen(req, timeout=TIMEOUT) as resp:
-                    total = int(resp.headers.get("Content-Length") or 0)
-                    with tmp.open("wb") as fh:
-                        while True:
-                            chunk = resp.read(CHUNK)
-                            if not chunk:
-                                break
-                            fh.write(chunk)
-                            got += len(chunk)
-                            _progress(got, total, started)
-
-            if got == 0:
-                raise OSError("下载内容为空")
-            if total and got != total:
-                raise OSError(f"大小不符: 期望 {total} 字节, 实际 {got} 字节")
-
-            tmp.replace(dest)
-            log(f"完成 {desc}: {got / 1e6:.1f} MB, 用时 {time.time() - started:.1f}s")
+            _download_once(url, dest, desc, tmp, expected_size)
             return dest
         except Exception as exc:  # noqa: BLE001 - 网络异常种类多, 统一重试
             last_err = exc
@@ -168,17 +416,33 @@ def http_download(url: str, dest: Path, desc: str = "") -> Path:
                 time.sleep(2 * attempt)
 
     die(f"下载 {desc} 失败: {last_err}")
+    raise AssertionError("unreachable")  # 让类型检查器知道这里不会返回
 
 
-def _progress(got: int, total: int, started: float) -> None:
-    if not total:
-        return
-    if got % (8 * CHUNK) < CHUNK or got == total:
-        pct = got * 100 / total
-        speed = got / max(time.time() - started, 1e-6) / 1e6
-        print(f"\r        {pct:5.1f}%  {got / 1e6:6.1f}/{total / 1e6:.1f} MB  {speed:5.1f} MB/s",
-              end="", flush=True)
-        if got == total:
+class _Progress:
+    """下载进度条。压缩响应下 total 是原始大小、落盘字节也按原始大小统计。"""
+
+    def __init__(self, total: int, started: float):
+        self.total = total
+        self.started = started
+        self._last = -1
+        self._done = False
+
+    def __call__(self, written: int, read: int) -> None:
+        if not self.total:
+            return
+        if written != self.total and written - self._last < 8 * CHUNK:
+            return
+        if written == self.total:
+            if self._done:
+                return
+            self._done = True
+        self._last = written
+        pct = min(written * 100 / self.total, 100.0)
+        speed = read / max(time.time() - self.started, 1e-6) / 1e6
+        print(f"\r        {pct:5.1f}%  {written / 1e6:6.1f}/{self.total / 1e6:.1f} MB"
+              f"  {speed:5.1f} MB/s", end="", flush=True)
+        if written == self.total:
             print(flush=True)
 
 
@@ -235,12 +499,16 @@ def copy_tree(src: Path, dst: Path, exclude=(), desc: str = "") -> int:
 def extract_zip(zip_path: Path, dst: Path) -> int:
     """解压 zip 到 dst（扁平解压, 覆盖同名文件）。"""
     dst.mkdir(parents=True, exist_ok=True)
-    with zipfile.ZipFile(zip_path) as zf:
-        bad = zf.testzip()
-        if bad is not None:
-            die(f"压缩包损坏: {bad}")
-        names = zf.namelist()
-        zf.extractall(dst)
+    try:
+        with zipfile.ZipFile(zip_path) as zf:
+            bad = zf.testzip()
+            if bad is not None:
+                die(f"压缩包损坏: {bad}")
+            names = zf.namelist()
+            zf.extractall(dst)
+    except zipfile.BadZipFile as exc:
+        # 下载环节已保证落盘的是原始 zip；走到这里通常是文件被换掉或手工放错
+        die(f"{zip_path} 不是有效的 zip: {exc}")
     log(f"解压 {zip_path.name}: {len(names)} 项 -> {dst}")
     return len(names)
 
@@ -326,6 +594,7 @@ def fetch_release(scheme: dict, cache: Path) -> dict:
     """步骤 2a: 查最新 release 并下载对应 zip。"""
     api = f"https://api.github.com/repos/{RELEASE_REPO}/releases/latest"
     asset_url = None
+    asset_size = 0
     tag = released = ""
     try:
         rel = http_get_json(api)
@@ -334,6 +603,7 @@ def fetch_release(scheme: dict, cache: Path) -> dict:
         for asset in rel.get("assets", []):
             if asset.get("name") == scheme["asset"]:
                 asset_url = asset.get("browser_download_url")
+                asset_size = int(asset.get("size") or 0)
                 break
         if not asset_url:
             log(f"release {tag} 中未找到 {scheme['asset']}, 回落到 latest 下载地址")
@@ -344,8 +614,10 @@ def fetch_release(scheme: dict, cache: Path) -> dict:
         asset_url = (f"https://github.com/{RELEASE_REPO}/releases/latest/download/"
                      f"{scheme['asset']}")
 
+    # asset_size 来自 release 元数据, 用它校验下载结果而不是只信 Content-Length
     zip_path = cache / scheme["asset"]
-    http_download(asset_url, zip_path, f"release {scheme['asset']}")
+    http_download(asset_url, zip_path, f"release {scheme['asset']}",
+                  expected_size=asset_size or None)
     return {
         "repo": RELEASE_REPO,
         "asset": scheme["asset"],
@@ -353,6 +625,7 @@ def fetch_release(scheme: dict, cache: Path) -> dict:
         "published_at": released,
         "url": asset_url,
         "size": zip_path.stat().st_size,
+        "declared_size": asset_size or None,
     }
 
 
@@ -364,8 +637,39 @@ def fetch_wxh_repo(cache: Path) -> dict:
     return {"repo": WXH_REPO, "url": url, "commit": head}
 
 
+def _remote_size(url: str) -> int:
+    """用 HEAD 取上游声明的原始大小; 取不到返回 0（只影响校验强度, 不致命）。
+
+    仍带 identity 头: 若服务端对 HEAD 也返回压缩内容, 其 Content-Length 是压缩后
+    的大小, 不能当期望值, 这种情况直接放弃校验。
+    """
+    try:
+        headers = _identity_headers()
+        reqs = _requests()
+        if reqs is not None:
+            with reqs.head(url, headers=headers, timeout=TIMEOUT, allow_redirects=True) as resp:
+                if resp.status_code >= 400:
+                    return 0
+                if (resp.headers.get("Content-Encoding") or "identity").lower() != "identity":
+                    return 0
+                return int(resp.headers.get("Content-Length") or 0)
+
+        import urllib.request
+
+        req = urllib.request.Request(url, headers=headers, method="HEAD")
+        with urllib.request.urlopen(req, timeout=TIMEOUT) as resp:
+            if (resp.headers.get("Content-Encoding") or "identity").lower() != "identity":
+                return 0
+            return int(resp.headers.get("Content-Length") or 0)
+    except Exception:  # noqa: BLE001 - HEAD 不被支持时静默降级
+        return 0
+
+
 def download_custom_dicts(dest_dir: Path, manifest: Path) -> list[dict]:
-    """步骤 4b: 根据 download.json 下载词库到 dest_dir。"""
+    """步骤 4b: 根据 download.json 下载词库到 dest_dir。
+
+    每条可写 size 显式声明原始字节数; 未写则用 HEAD 探测上游 Content-Length 做校验。
+    """
     if not manifest.is_file():
         die(f"缺少词库清单: {manifest}")
     try:
@@ -383,9 +687,13 @@ def download_custom_dicts(dest_dir: Path, manifest: Path) -> list[dict]:
         # 用 URL 的最后一段做文件名, 与 user.dict.yaml 同级
         filename = Path(url.split("?")[0]).name
         target = dest_dir / filename
-        http_download(url, target, f"词库 {name}")
+        expected = int(entry.get("size") or 0) or _remote_size(url)
+        if expected:
+            log(f"词库 {name} 上游声明大小: {expected} 字节")
+        http_download(url, target, f"词库 {name}", expected_size=expected or None)
         results.append({"name": name, "url": url, "file": filename,
-                        "size": target.stat().st_size})
+                        "size": target.stat().st_size,
+                        "declared_size": expected or None})
     return results
 
 
@@ -511,9 +819,16 @@ def main(argv: list[str] | None = None) -> int:
 
     scheme = pick_scheme(args.scheme, args.yes)
     out_zip = (args.output or (ROOT / scheme["zip_name"])).resolve()
+    workdir = args.workdir.resolve()
+
+    # 产物不能放进临时目录: 打包后清理 workdir 会把产物一起删掉（以前会静默删掉）
+    if out_zip == workdir or workdir in out_zip.parents:
+        die(f"输出路径不能位于临时目录内: {out_zip}\n"
+            f"      临时目录 {workdir} 构建结束后会被清理; 请换一个 -o 路径, "
+            f"或加 --keep-workdir 保留临时目录")
 
     started = time.time()
-    info = build(scheme, args.workdir.resolve(), out_zip,
+    info = build(scheme, workdir, out_zip,
                  args.keep_workdir, args.skip_download)
 
     print("-" * 60)

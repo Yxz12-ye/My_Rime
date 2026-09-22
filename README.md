@@ -70,6 +70,40 @@ Trime-wxh.zip / Trime-flypy.zip
 > `custom_dict/` 必须保持为子目录：`wanxiang_pro.dict.yaml` 通过 `custom_dict/user`、
 > `custom_dict/minecraft_cn` 导入词库，因此下载的词库与 `user.dict.yaml` 同级放在该目录内。
 
+### 词库清单 `download.json`
+
+数组，每项一个词库：
+
+| 字段 | 必填 | 说明 |
+| --- | --- | --- |
+| `name` | 是 | 词库名，仅用于日志 |
+| `url` | 是 | 下载地址；文件名取 URL 最后一段，与 `user.dict.yaml` 同级 |
+| `size` | 否 | 上游原始字节数；用于下载后校验，不写则用 HEAD 自动探测 |
+
+```json
+[
+    {
+        "name": "minecraft_cn",
+        "url": "https://raw.githubusercontent.com/Kimiblock/rime-minecraft-dict/refs/heads/master/minecraft_cn.dict.yaml",
+        "size": 58986
+    }
+]
+```
+
+### 下载完整性
+
+下载层不依赖 HTTP 库自带的解压行为（`requests` 会透明解压却留着压缩后的
+`Content-Length`，`urllib` 则会把 gzip 流原样写进文件）：
+
+- 请求统一带 `Accept-Encoding: identity`；服务端/代理若仍然压缩，则按
+  `Content-Encoding` 自行流式解压（gzip / zlib / 裸 deflate 双模式嗅探）。
+- 结束时检查 `decompressor.eof`，压缩流被截断一律判失败并重试。
+- 优先与上游声明的原始大小比对（release 用 GitHub API 的 `asset["size"]`，
+  词库用清单 `size` 或 HEAD 探测的 `Content-Length`）。
+- 按扩展名校验文件头（`.zip` 必须是 `PK`，`.gz` 必须是 `1f 8b`）。
+
+回归测试：`python test_download.py`（本地起测试服务器覆盖上述全部路径）。
+
 ### 版本记录
 
 每次构建的版本信息写入 `.version/`：
@@ -93,6 +127,7 @@ Trime-wxh.zip / Trime-flypy.zip
 | 路径 | 说明 |
 | --- | --- |
 | `build.py` | 构建脚本 |
+| `test_download.py` | 下载层回归测试（解码 / 截断 / 大小校验） |
 | `patch/wxh/` | 万象虎方案的配置覆盖 |
 | `patch/flypy/` | 小鹤双拼方案的配置覆盖 |
 | `patch/custom_dict/` | 个人词库目录 + `download.json` 下载清单 |
