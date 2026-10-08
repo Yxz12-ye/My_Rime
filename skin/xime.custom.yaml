@@ -1,6 +1,6 @@
 metadata:
   app_name: Xime
-  app_version: ">=2.4.2"
+  app_version: ">=3.0.0"
   platform: android
   config_version: 1
   generator: "Ice Mint keyboard port"
@@ -50,36 +50,40 @@ keyboard:
       rows:
         - [q, w, e, r, t, y, u, i, o, p]
         - [a, s, d, f, g, h, j, k, l]
-        - [z, x, c, v, b, n, m]
+        - [shift, z, x, c, v, b, n, m, delete]
     keys:
-      q: { tap: "q", swipe_up: "!", swipe_down: "1" }
-      w: { tap: "w", swipe_up: "@", swipe_down: "2" }
-      e: { tap: "e", swipe_up: "#", swipe_down: "3" }
-      r: { tap: "r", swipe_up: "$", swipe_down: "4" }
-      t: { tap: "t", swipe_up: "%", swipe_down: "5" }
-      y: { tap: "y", swipe_up: "^", swipe_down: "6" }
-      u: { tap: "u", swipe_up: "&", swipe_down: "7" }
-      i: { tap: "i", swipe_up: "*", swipe_down: "8" }
-      o: { tap: "o", swipe_up: "(", swipe_down: "9" }
-      p: { tap: "p", swipe_up: ")", swipe_down: "0" }
-      a: { tap: "a", swipe_up: "?", swipe_down: "?" }
-      s: { tap: "s", swipe_up: "'", swipe_down: "!" }
-      d: { tap: "d", swipe_up: "\"", swipe_down: "'" }
-      f: { tap: "f", swipe_up: "-", swipe_down: "\"" }
-      g: { tap: "g", swipe_up: ":", swipe_down: "-" }
-      h: { tap: "h", swipe_up: ";", swipe_down: ":" }
-      j: { tap: "j", swipe_up: "+", swipe_down: ";" }
-      k: { tap: "k", swipe_up: "=", swipe_down: "()" }
-      l: { tap: "l", swipe_up: "_", swipe_down: "+" }
-      z: { tap: "z", swipe_up: "[", swipe_down: "[]" }
-      x: { tap: "x", swipe_up: "]", swipe_down: "^" }
-      c: { tap: "c", swipe_up: "{", swipe_down: "{}" }
-      v: { tap: "v", swipe_up: "}", swipe_down: "<>" }
-      b: { tap: "b", swipe_up: "/", swipe_down: "/" }
-      n: { tap: "n", swipe_up: "\\", swipe_down: "\\" }
-      m: { tap: "m", swipe_up: "`", swipe_down: "|" }
-      "'": { tap: { label: ",", value: "," }, swipe_up: { label: ".", value: "." } }
-      earth: { tap: { label: "中", action: "toggle_ascii" } }
+      q: { tap: { label: "q", value: "q", bubble: false }, swipe_up: { label: "!", value: "!", bubble: false }, swipe_down: { label: "1", value: "1", bubble: false } }
+      w: { tap: { label: "w", value: "w", bubble: false }, swipe_up: { label: "@", value: "@", bubble: false }, swipe_down: { label: "2", value: "2", bubble: false } }
+      e: { tap: { label: "e", value: "e", bubble: false }, swipe_up: { label: "#", value: "#", bubble: false }, swipe_down: { label: "3", value: "3", bubble: false } }
+      r: { tap: { label: "r", value: "r", bubble: false }, swipe_up: { label: "$", value: "$", bubble: false }, swipe_down: { label: "4", value: "4", bubble: false } }
+      t: { tap: { label: "t", value: "t", bubble: false }, swipe_up: { label: "%", value: "%", bubble: false }, swipe_down: { label: "5", value: "5", bubble: false } }
+      y: { tap: { label: "y", value: "y", bubble: false }, swipe_up: { label: "^", value: "^", bubble: false }, swipe_down: { label: "6", value: "6", bubble: false } }
+      u: { tap: { label: "u", value: "u", bubble: false }, swipe_up: { label: "&", value: "&", bubble: false }, swipe_down: { label: "7", value: "7", bubble: false } }
+      i: { tap: { label: "i", value: "i", bubble: false }, swipe_up: { label: "*", value: "*", bubble: false }, swipe_down: { label: "8", value: "8", bubble: false } }
+      o: { tap: { label: "o", value: "o", bubble: false }, swipe_up: { label: "(", value: "(", bubble: false }, swipe_down: { label: "9", value: "9", bubble: false } }
+      p: { tap: { label: "p", value: "p", bubble: false }, swipe_up: { label: ")", value: ")", bubble: false }, swipe_down: { label: "0", value: "0", bubble: false } }
+      a: { tap: { label: "a", value: "a", bubble: false }, swipe_up: { label: "?", value: "?", bubble: false }, swipe_down: { label: "?", value: "?", bubble: false } }
+      s: { tap: { label: "s", value: "s", bubble: false }, swipe_up: { label: "'", value: "'", bubble: false }, swipe_down: { label: "!", value: "!", bubble: false } }
+      d: { tap: { label: "d", value: "d", bubble: false }, swipe_up: { label: "\"", value: "\"", bubble: false }, swipe_down: { label: "'", value: "'", bubble: false } }
+      f: { tap: { label: "f", value: "f", bubble: false }, swipe_up: { label: "-", value: "-", bubble: false }, swipe_down: { label: "\"", value: "\"", bubble: false } }
+      g: { tap: { label: "g", value: "g", bubble: false }, swipe_up: { label: ":", value: ":", bubble: false }, swipe_down: { label: "-", value: "-", bubble: false } }
+      h: { tap: { label: "h", value: "h", bubble: false }, swipe_up: { label: ";", value: ";", bubble: false }, swipe_down: { label: ":", value: ":", bubble: false } }
+      j: { tap: { label: "j", value: "j", bubble: false }, swipe_up: { label: "+", value: "+", bubble: false }, swipe_down: { label: ";", value: ";", bubble: false } }
+      k: { tap: { label: "k", value: "k", bubble: false }, swipe_up: { label: "=", value: "=", bubble: false }, swipe_down: { label: "()", value: "()", bubble: false } }
+      l: { tap: { label: "l", value: "l", bubble: false }, swipe_up: { label: "_", value: "_", bubble: false }, swipe_down: { label: "+", value: "+", bubble: false } }
+      z: { tap: { label: "z", value: "z", bubble: false }, swipe_up: { label: "[", value: "[", bubble: false }, swipe_down: { label: "[]", value: "[]", bubble: false } }
+      x: { tap: { label: "x", value: "x", bubble: false }, swipe_up: { label: "]", value: "]", bubble: false }, swipe_down: { label: "^", value: "^", bubble: false } }
+      c: { tap: { label: "c", value: "c", bubble: false }, swipe_up: { label: "{", value: "{", bubble: false }, swipe_down: { label: "{}", value: "{}", bubble: false } }
+      v: { tap: { label: "v", value: "v", bubble: false }, swipe_up: { label: "}", value: "}", bubble: false }, swipe_down: { label: "<>", value: "<>", bubble: false } }
+      b: { tap: { label: "b", value: "b", bubble: false }, swipe_up: { label: "/", value: "/", bubble: false }, swipe_down: { label: "/", value: "/", bubble: false } }
+      n: { tap: { label: "n", value: "n", bubble: false }, swipe_up: { label: "\\", value: "\\", bubble: false }, swipe_down: { label: "\\", value: "\\", bubble: false } }
+      m: { tap: { label: "m", value: "m", bubble: false }, swipe_up: { label: "`", value: "`", bubble: false }, swipe_down: { label: "|", value: "|", bubble: false } }
+      "'": { tap: { label: ",", value: ",", bubble: false }, swipe_up: { label: ".", value: ".", bubble: false } }
+      shift: { width: 1.4, tap: { action: "command", value: "shift_single", bubble: false }, double_tap: { action: "command", value: "shift_caps", bubble: false } }
+      delete: { width: 1.4, tap: { action: "delete", bubble: false }, long_press: { values: [{ action: "delete", repeat: true }] }, swipe_up: { action: "clear_all", label: "上滑清空", bubble: true }, swipe_down: { action: "undo_clear", label: "下滑撤回", bubble: false }, swipe_left: { action: "command", value: "clear_composition" }, swipe_right: { action: "command", value: "clear_composition" } }
+      mode_change: { width: 1.2, tap: { action: "command", value: "mode_change", bubble: false }, long_press: { display: "bubble", values: [{ label: "number", action: "command", value: "mode_change_number" }, { label: "common_symbol", action: "command", value: "mode_change_common_symbol" }] } }
+      comma: { tap: { label: "，", value: ",", bubble: false }, swipe_up: { label: "。", value: ".", bubble: false }, long_press: { display: "bubble", values: [",", "."] } }
+      earth: { tap: { label: "中", action: "toggle_ascii", bubble: false } }
 
   # Ice Mint 的英文模式沿用同一组 26 键；上滑同样输入符号。
   qwerty_en:
@@ -88,34 +92,38 @@ keyboard:
       rows:
         - [q, w, e, r, t, y, u, i, o, p]
         - [a, s, d, f, g, h, j, k, l]
-        - [z, x, c, v, b, n, m]
+        - [shift, z, x, c, v, b, n, m, delete]
     keys:
-      q: { tap: "q", swipe_up: "!", swipe_down: "1" }
-      w: { tap: "w", swipe_up: "@", swipe_down: "2" }
-      e: { tap: "e", swipe_up: "#", swipe_down: "3" }
-      r: { tap: "r", swipe_up: "$", swipe_down: "4" }
-      t: { tap: "t", swipe_up: "%", swipe_down: "5" }
-      y: { tap: "y", swipe_up: "^", swipe_down: "6" }
-      u: { tap: "u", swipe_up: "&", swipe_down: "7" }
-      i: { tap: "i", swipe_up: "*", swipe_down: "8" }
-      o: { tap: "o", swipe_up: "(", swipe_down: "9" }
-      p: { tap: "p", swipe_up: ")", swipe_down: "0" }
-      a: { tap: "a", swipe_up: "?", swipe_down: "?" }
-      s: { tap: "s", swipe_up: "'", swipe_down: "!" }
-      d: { tap: "d", swipe_up: "\"", swipe_down: "=" }
-      f: { tap: "f", swipe_up: "-", swipe_down: "_" }
-      g: { tap: "g", swipe_up: ":", swipe_down: "-" }
-      h: { tap: "h", swipe_up: ";", swipe_down: ":" }
-      j: { tap: "j", swipe_up: "+", swipe_down: ";" }
-      k: { tap: "k", swipe_up: "=", swipe_down: "()" }
-      l: { tap: "l", swipe_up: "_", swipe_down: "+" }
-      z: { tap: "z", swipe_up: "[", swipe_down: "[]" }
-      x: { tap: "x", swipe_up: "]", swipe_down: "^" }
-      c: { tap: "c", swipe_up: "{", swipe_down: "{}" }
-      v: { tap: "v", swipe_up: "}", swipe_down: "<>" }
-      b: { tap: "b", swipe_up: "/", swipe_down: "/" }
-      n: { tap: "n", swipe_up: "\\", swipe_down: "\\" }
-      m: { tap: "m", swipe_up: "|", swipe_down: "@" }
+      q: { tap: { label: "q", value: "q", bubble: false }, swipe_up: { label: "!", value: "!", bubble: false }, swipe_down: { label: "1", value: "1", bubble: false } }
+      w: { tap: { label: "w", value: "w", bubble: false }, swipe_up: { label: "@", value: "@", bubble: false }, swipe_down: { label: "2", value: "2", bubble: false } }
+      e: { tap: { label: "e", value: "e", bubble: false }, swipe_up: { label: "#", value: "#", bubble: false }, swipe_down: { label: "3", value: "3", bubble: false } }
+      r: { tap: { label: "r", value: "r", bubble: false }, swipe_up: { label: "$", value: "$", bubble: false }, swipe_down: { label: "4", value: "4", bubble: false } }
+      t: { tap: { label: "t", value: "t", bubble: false }, swipe_up: { label: "%", value: "%", bubble: false }, swipe_down: { label: "5", value: "5", bubble: false } }
+      y: { tap: { label: "y", value: "y", bubble: false }, swipe_up: { label: "^", value: "^", bubble: false }, swipe_down: { label: "6", value: "6", bubble: false } }
+      u: { tap: { label: "u", value: "u", bubble: false }, swipe_up: { label: "&", value: "&", bubble: false }, swipe_down: { label: "7", value: "7", bubble: false } }
+      i: { tap: { label: "i", value: "i", bubble: false }, swipe_up: { label: "*", value: "*", bubble: false }, swipe_down: { label: "8", value: "8", bubble: false } }
+      o: { tap: { label: "o", value: "o", bubble: false }, swipe_up: { label: "(", value: "(", bubble: false }, swipe_down: { label: "9", value: "9", bubble: false } }
+      p: { tap: { label: "p", value: "p", bubble: false }, swipe_up: { label: ")", value: ")", bubble: false }, swipe_down: { label: "0", value: "0", bubble: false } }
+      a: { tap: { label: "a", value: "a", bubble: false }, swipe_up: { label: "?", value: "?", bubble: false }, swipe_down: { label: "?", value: "?", bubble: false } }
+      s: { tap: { label: "s", value: "s", bubble: false }, swipe_up: { label: "'", value: "'", bubble: false }, swipe_down: { label: "!", value: "!", bubble: false } }
+      d: { tap: { label: "d", value: "d", bubble: false }, swipe_up: { label: "\"", value: "\"", bubble: false }, swipe_down: { label: "=", value: "=", bubble: false } }
+      f: { tap: { label: "f", value: "f", bubble: false }, swipe_up: { label: "-", value: "-", bubble: false }, swipe_down: { label: "_", value: "_", bubble: false } }
+      g: { tap: { label: "g", value: "g", bubble: false }, swipe_up: { label: ":", value: ":", bubble: false }, swipe_down: { label: "-", value: "-", bubble: false } }
+      h: { tap: { label: "h", value: "h", bubble: false }, swipe_up: { label: ";", value: ";", bubble: false }, swipe_down: { label: ":", value: ":", bubble: false } }
+      j: { tap: { label: "j", value: "j", bubble: false }, swipe_up: { label: "+", value: "+", bubble: false }, swipe_down: { label: ";", value: ";", bubble: false } }
+      k: { tap: { label: "k", value: "k", bubble: false }, swipe_up: { label: "=", value: "=", bubble: false }, swipe_down: { label: "()", value: "()", bubble: false } }
+      l: { tap: { label: "l", value: "l", bubble: false }, swipe_up: { label: "_", value: "_", bubble: false }, swipe_down: { label: "+", value: "+", bubble: false } }
+      z: { tap: { label: "z", value: "z", bubble: false }, swipe_up: { label: "[", value: "[", bubble: false }, swipe_down: { label: "[]", value: "[]", bubble: false } }
+      x: { tap: { label: "x", value: "x", bubble: false }, swipe_up: { label: "]", value: "]", bubble: false }, swipe_down: { label: "^", value: "^", bubble: false } }
+      c: { tap: { label: "c", value: "c", bubble: false }, swipe_up: { label: "{", value: "{", bubble: false }, swipe_down: { label: "{}", value: "{}", bubble: false } }
+      v: { tap: { label: "v", value: "v", bubble: false }, swipe_up: { label: "}", value: "}", bubble: false }, swipe_down: { label: "<>", value: "<>", bubble: false } }
+      b: { tap: { label: "b", value: "b", bubble: false }, swipe_up: { label: "/", value: "/", bubble: false }, swipe_down: { label: "/", value: "/", bubble: false } }
+      n: { tap: { label: "n", value: "n", bubble: false }, swipe_up: { label: "\\", value: "\\", bubble: false }, swipe_down: { label: "\\", value: "\\", bubble: false } }
+      m: { tap: { label: "m", value: "m", bubble: false }, swipe_up: { label: "|", value: "|", bubble: false }, swipe_down: { label: "@", value: "@", bubble: false } }
       # fullref 中的附加键，供 Xime 底部控制条使用。
-      "'": { tap: { label: ",", value: "," }, swipe_up: { label: ".", value: "." } }
-      earth: { tap: { label: "中", action: "toggle_ascii" } }
+      "'": { tap: { label: ",", value: ",", bubble: false }, swipe_up: { label: ".", value: ".", bubble: false } }
+      shift: { width: 1.4, tap: { action: "command", value: "shift_single", bubble: false }, double_tap: { action: "command", value: "shift_caps", bubble: false } }
+      delete: { width: 1.4, tap: { action: "delete", bubble: false }, long_press: { values: [{ action: "delete", repeat: true }] }, swipe_up: { action: "clear_all", label: "上滑清空", bubble: true }, swipe_down: { action: "undo_clear", label: "下滑撤回", bubble: false }, swipe_left: { action: "command", value: "clear_composition" }, swipe_right: { action: "command", value: "clear_composition" } }
+      mode_change: { width: 1.2, tap: { action: "command", value: "mode_change", bubble: false }, long_press: { display: "bubble", values: [{ label: "number", action: "command", value: "mode_change_number" }, { label: "common_symbol", action: "command", value: "mode_change_common_symbol" }] } }
+      comma: { tap: { label: ".", value: ".", bubble: false }, swipe_up: { label: ",", value: ",", bubble: false } }
+      earth: { tap: { label: "中", action: "toggle_ascii", bubble: false } }
