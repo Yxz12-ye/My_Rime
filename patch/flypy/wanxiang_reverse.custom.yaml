@@ -1,8 +1,9 @@
 # 修复反查无法使用双拼的问题
 patch:
   speller/algebra:
-    __include: wanxiang_algebra:/reverse/小鹤双拼
-    __patch: wanxiang_algebra:/reverse/hspzn
+    __patch: 
+        - wanxiang_algebra:/reverse/小鹤双拼
+        - wanxiang_algebra:/reverse/hspzn
 
   speller/algebra/@before 0: derive/(ē|é|ě|è|e)ng(.*)$/$1n$2
   speller/algebra/@before 1: derive/(ē|é|ě|è|e)n(.*)$/$1ng$2
